@@ -27,6 +27,7 @@ const server = http.createServer((req,res)=>{
             res.statusCode=301;
             res.setHeader('Location', '/about');   // redirecting to /about    only
             res.end();
+            break;
         default :
             path+= '/404.html';
             res.statusCode=404;
