@@ -21,22 +21,35 @@ let user=[
     
 ]
 
-app.get('/user', (req,res)=>{
+const userRouter = express.Router();
+app.use('/user', userRouter );
+
+userRouter.route('/')
+.get(getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser);
+
+userRouter.route('/:id')
+.get(getUserById);
+
+
+//---------------- for mounting ---------------
+
+function getUser(req,res){
     console.log(req.query);
     res.send(user);
-})
-
-app.post('/user',(req,res)=>{
+}
+function postUser(req,res){
     console.log(req.body);
     user= {...req.body};
     res.json({                     //can use res.send here as well
         message:"Data recieved",
         user:req.body
     })
-})
+}
 
-
-app.patch('/user', (req,res)=>{
+function updateUser(req,res){
     console.log('req->body ' ,req.body);
     for(key in req.body){
         user[key]= req.body[key];
@@ -45,19 +58,22 @@ app.patch('/user', (req,res)=>{
         message: "data updated",
         user:user
     })
-})
+}
 
-app.delete('/user', (req,res)=>{
+function deleteUser(req,res){
     user={};
     res.json({
         message:"data deleted successfully",
         user:user
     });
-});
+}
 
-//params..(
-app.get('/user/:id',(req,res)=>{
+function getUserById(req,res){
     console.log("user id is-> ", req.params);
-    // res.send(req.params);
-    res.send(req.params.id)
-})
+    res.send(req.params);
+    // res.send(req.params.id)
+}
+/*
+localhost:3000/user/1                   //params
+localhost:3000/user/?_id=2             //query- params
+*/
