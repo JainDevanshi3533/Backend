@@ -36,8 +36,18 @@ userRouter.route('/:id')
 
 
 authRouter.route('/signup')
-.get(getSignup)
+// .get(midfunc1,getSignup)                          //using a middleware function
+.get(midfunc1,getSignup,midfunc2)
 .post(postSignup);
+
+//middleware function..
+function midfunc1(req,res,next){
+    console.log('middle ware1 function is called');
+    next();
+}
+function midfunc2(req,res){
+    console.log('middle 2 function is called');
+}
 //---------------- for mounting ---------------
 
 function getUser(req,res){
@@ -82,10 +92,16 @@ localhost:3000/user/1                   //params
 localhost:3000/user/?_id=2             //query- params
 */
 
-function getSignup(req,res){
-    res.sendFile('/public/index.html', {root:__dirname});
-}
+// function getSignup(req,res){
+//     console.log('getSignup Called')
+//     res.sendFile('/public/index.html', {root:__dirname});
+// }
 
+function getSignup(req,res, next){
+    console.log('getSignup Called')
+    res.sendFile('/public/index.html', {root:__dirname});
+    next();
+}
 function postSignup(req,res){
     let userData = req.body;
     console.log("userData: " ,userData);
