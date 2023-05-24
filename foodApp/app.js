@@ -27,7 +27,7 @@ const authRouter = express.Router();
 app.use('/user', userRouter );
 app.use('/auth', authRouter );
 userRouter.route('/')
-.get(getUser)
+.get(getUsers)
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -51,8 +51,17 @@ function midfunc2(req,res){
 }
 //---------------- for mounting ---------------
 
-function getUser(req,res){
-    console.log(req.query);
+async function getUsers(req,res){
+    // console.log(req.query);
+    // res.send(user);
+
+    // let allUsers= await userModel.find();
+    // res.json({
+    //     message:'list of all users',
+    //     data:allUsers
+    // });
+
+    let user = await userModel.findOne({email:'abc@gmail.com'});
     res.send(user);
 }
 function postUser(req,res){
@@ -64,19 +73,26 @@ function postUser(req,res){
     })
 }
 
-function updateUser(req,res){
-    console.log('req->body ' ,req.body);
-    for(key in req.body){
-        user[key]= req.body[key];
-    }
+async function updateUser(req,res){
+    // console.log('req->body ' ,req.body);
+    // for(key in req.body){
+    //     user[key]= req.body[key];
+    // }
+
+    let dataToBeUpdated= req.body;
+    let user = await userModel.findOneAndUpdate({email:'abc@gmail.com'},dataToBeUpdated);
     res.json({
         message: "data updated",
         user:user
     })
 }
 
-function deleteUser(req,res){
-    user={};
+async function deleteUser(req,res){
+    // user={};
+
+    // let user = await userModel.findOneAndDelete({email:'x@gmail.com'});
+    let dataToDelete= req.body;
+    let user = await userModel.findOneAndDelete(dataToDelete);
     res.json({
         message:"data deleted successfully",
         user:user
@@ -103,12 +119,13 @@ function getSignup(req,res, next){
     res.sendFile('/public/index.html', {root:__dirname});
     next();
 }
-function postSignup(req,res){
+ async function postSignup(req,res){
     let userData = req.body;
+    let user = await userModel.create(userData);
     console.log("userData: " ,userData);
     res.json({
         message:"user signed up",
-        data: userData
+        data: user
     })
 }
 const db_link='mongodb+srv://mndgmndg:mndgmndg@cluster0.ucsnz0u.mongodb.net/?retryWrites=true&w=majority';
@@ -145,14 +162,14 @@ const userSchema = mongoose.Schema({
 
 const userModel = mongoose.model('user',userSchema);
 
-(async function createUser(){
-    let user={
-        name:"Devanshi",
-        email:"abc@gmail.com",
-        password:"ala",
-        confirmPassword:"ala"
-    };
+// (async function createUser(){
+//     let user={
+//         name:"Devanshi",
+//         email:"abc@gmail.com",
+//         password:"ala",
+//         confirmPassword:"ala"
+//     };
 
-    let data = await userModel.create(user);
-    console.log(data);
-})();
+//     let data = await userModel.create(user);
+//     console.log(data);
+// })();
