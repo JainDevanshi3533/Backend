@@ -1,9 +1,9 @@
 //video 16..
 
 const express = require('express');
-const mongoose = require('mongoose');
-const emailValidator = require('email-validator');
 const app = express();
+
+const userModel = require('./models/userModel');
 app.use(express.json());
 app.listen(3000,()=> console.log('server is listening at port 3000'));
 
@@ -129,64 +129,3 @@ function getSignup(req,res, next){
         data: user
     })
 }
-const db_link='mongodb+srv://mndgmndg:mndgmndg@cluster0.ucsnz0u.mongodb.net/?retryWrites=true&w=majority';
-mongoose.connect(db_link)
-.then(function(db){
-    // console.log(db)
-    console.log('db connected');
-})
-.catch(function(err){
-    console.log(err);
-})
-
-const userSchema = mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
-        validate: function(){
-            return emailValidator.validate(this.email);
-        }
-    },
-    password:{
-        type:String,
-        required:true,
-        minLength:3
-    },
-    confirmPassword:{
-        type:String,
-        required:true,
-        minLength:3,
-        validate: function(){
-            return this.confirmPassword== this.password;
-        }
-    }
-})
-//mongoose pre post hooks ...
-userSchema.pre('save', function(){
-    this.confirmPassword=undefined;
-    console.log('Before saving in Database', this);
-})
-
-userSchema.post('save', function(doc){
-    console.log('After saving in DataBase', doc);
-})
-
-
-const userModel = mongoose.model('user',userSchema);
-
-// (async function createUser(){
-//     let user={
-//         name:"Devanshi",
-//         email:"abc@gmail.com",
-//         password:"ala",
-//         confirmPassword:"ala"
-//     };
-
-//     let data = await userModel.create(user);
-//     console.log(data);
-// })();
