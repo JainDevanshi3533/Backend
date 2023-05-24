@@ -1,7 +1,8 @@
-//video 10..
+//video 16..
 
 const express = require('express');
 const mongoose = require('mongoose');
+const emailValidator = require('email-validator');
 const app = express();
 app.use(express.json());
 app.listen(3000,()=> console.log('server is listening at port 3000'));
@@ -122,7 +123,7 @@ function getSignup(req,res, next){
  async function postSignup(req,res){
     let userData = req.body;
     let user = await userModel.create(userData);
-    console.log("userData: " ,userData);
+    // console.log("userData: " ,userData);
     res.json({
         message:"user signed up",
         data: user
@@ -146,7 +147,10 @@ const userSchema = mongoose.Schema({
     email:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        validate: function(){
+            return emailValidator.validate(this.email);
+        }
     },
     password:{
         type:String,
@@ -156,9 +160,22 @@ const userSchema = mongoose.Schema({
     confirmPassword:{
         type:String,
         required:true,
-        minLength:3
+        minLength:3,
+        validate: function(){
+            return this.confirmPassword== this.password;
+        }
     }
 })
+//mongoose pre post hooks ...
+userSchema.pre('save', function(){
+    this.confirmPassword=undefined;
+    console.log('Before saving in Database', this);
+})
+
+userSchema.post('save', function(doc){
+    console.log('After saving in DataBase', doc);
+})
+
 
 const userModel = mongoose.model('user',userSchema);
 
