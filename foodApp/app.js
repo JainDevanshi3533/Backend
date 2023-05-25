@@ -2,9 +2,11 @@
 
 const express = require('express');
 const app = express();
+const cookieParser= require('cookie-parser');
 
 const userModel = require('./models/userModel');
 app.use(express.json());
+app.use(cookieParser());
 app.listen(3000,()=> console.log('server is listening at port 3000'));
 
 let user=[
@@ -33,9 +35,13 @@ userRouter.route('/')
 .patch(updateUser)
 .delete(deleteUser);
 
-userRouter.route('/:id')
-.get(getUserById);
+// userRouter.route('/:id')
+// .get(getUserById);
 
+userRouter.route('/getCookies')
+.get(getCookies);
+userRouter.route('/setCookies')
+.get(setCookies);
 
 authRouter.route('/signup')
 // .get(midfunc1,getSignup)                          //using a middleware function
@@ -128,4 +134,14 @@ function getSignup(req,res, next){
         message:"user signed up",
         data: user
     })
+}
+
+function getCookies(req,res){
+
+}
+
+function setCookies(req,res){
+    // res.setHeader('Set-Cookie', 'isLoggedIn=true');
+    res.cookie('isLoggedIn',  false,{maxAge:1000*60*60*24, secure:true});      //expires-maxage: here set to 24 hours  in milliseconds
+    res.send('cookie has been sent');
 }
