@@ -137,11 +137,15 @@ function getSignup(req,res, next){
 }
 
 function getCookies(req,res){
-
+    let my_cookies = req.cookies;
+    console.log(my_cookies);
+    res.send('cookie recieved');
 }
 
 function setCookies(req,res){
     // res.setHeader('Set-Cookie', 'isLoggedIn=true');
-    res.cookie('isLoggedIn',  false,{maxAge:1000*60*60*24, secure:true});      //expires-maxage: here set to 24 hours  in milliseconds
+    res.cookie('isLoggedIn',  false,{maxAge:1000*60*60*24, secure:true, httpOnly:true});      //expires-maxage: here set to 24 hours  in milliseconds
+                                    // expires in         ,security , can access from server http only..i.e not from frontend using inspect: document.cookie
+    res.cookie('assessibleFromfrontend', true);
     res.send('cookie has been sent');
 }
