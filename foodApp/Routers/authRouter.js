@@ -55,6 +55,7 @@ async function loginUser(req,res){
             if(user){
                 //bcrypt->compare
                 if(user.password == data.password){
+                    res.cookie('isLoggedIn',true,{httpOnly:true});
                     return res.json({
                         message:'User has logged In',
                         userDetails:data

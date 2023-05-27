@@ -1,9 +1,9 @@
 const express = require('express');
 const userRouter = express.Router();
 const userModel = require('../models/userModel');
-
+const protectRoute = require('./authHelper');
 userRouter.route('/')
-.get(getUsers)
+.get(protectRoute,getUsers)
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -22,14 +22,14 @@ async function getUsers(req,res){
     // console.log(req.query);
     // res.send(user);
 
-    // let allUsers= await userModel.find();
-    // res.json({
-    //     message:'list of all users',
-    //     data:allUsers
-    // });
+    let allUsers= await userModel.find();
+    res.json({
+        message:'list of all users',
+        data:allUsers
+    });
 
-    let user = await userModel.findOne({email:'abc@gmail.com'});
-    res.send(user);
+    // let user = await userModel.findOne({email:'abc@gmail.com'});
+    // res.send(user);
 }
 function postUser(req,res){
     console.log(req.body);
